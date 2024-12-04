@@ -98,6 +98,7 @@ class Track(SQLModel, table=True):
     title: str = Field(max_length=255, nullable=False)
     duration: Optional[time] = Field(default=None)
     album_id: int = Field(foreign_key="album.album_id")
+    album_id: int = Field(foreign_key="album.album_id")
 
     album: Optional[Album] = Relationship(back_populates="tracks")
     track_artists: List["TrackArtist"] = Relationship(back_populates="track")
@@ -198,7 +199,7 @@ def update_album(id: int, album_data: Album, session: Session = Depends(get_sess
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-    for key, value in album_data.dict(exclude_unset=True).items():
+    for key, value in album_data.obj.model_dump(exclude_unset=True).items():
         setattr(album, key, value)
     session.commit()
     session.refresh(album)
@@ -223,7 +224,7 @@ def update_genre(id: int, genre_data: Genre, session: Session = Depends(get_sess
     genre = session.get(Genre, id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
-    for key, value in genre_data.dict(exclude_unset=True).items():
+    for key, value in genre_data.obj.model_dump(exclude_unset=True).items():
         setattr(genre, key, value)
     session.commit()
     session.refresh(genre)
@@ -232,14 +233,22 @@ def update_genre(id: int, genre_data: Genre, session: Session = Depends(get_sess
 # --- Endpoints Artists ---
 @app.get("/api/artists/{id}/songs")
 def get_artist_songs(id: int, session: Session = Depends(get_session)):
-    return session.exec(select(Track).where(Track.artist_id == id)).all()
+    # Requête pour trouver les morceaux liés à cet artiste
+    tracks = session.exec(
+        select(Track).join(TrackArtist).where(TrackArtist.artist_id == id)
+    ).all()
+    
+    if not tracks:
+        raise HTTPException(status_code=404, detail="No songs found for the given artist")
+    
+    return tracks
 
 @app.put("/api/artists/{id}")
 def update_artist(id: int, artist_data: Artist, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     artist = session.get(Artist, id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
-    for key, value in artist_data.dict(exclude_unset=True).items():
+    for key, value in artist_data.obj.model_dump(exclude_unset=True).items():
         setattr(artist, key, value)
     session.commit()
     session.refresh(artist)

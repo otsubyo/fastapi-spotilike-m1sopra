@@ -8,7 +8,9 @@ import router from './router'
 
 const app = createApp(App)
 
-app.use(createPinia())
-app.use(router)
+// Use Pinia and Vue Router
+app.use(createPinia())   // Setting up the Pinia store
+app.use(router)          // Setting up the router
 
+// Mount the app on the DOM element with the id "app"
 app.mount('#app')

@@ -1,8 +1,8 @@
 <template>
-    <div class="album-details" v-if="album">
-      <h2>{{ album.title }}</h2>
-      <img :src="album.cover" alt="Album Cover" />
-      <p><strong>Release Date:</strong> {{ album.release_date }}</p>
+    <div class="artist-details" v-if="artist">
+      <h2>{{ artist.name }}</h2>
+      <img :src="artist.avatar" alt="Artist Avatar" />
+      <p><strong>Biography:</strong> {{ artist.biography }}</p>
   
       <h3>Songs</h3>
       <ul>
@@ -12,32 +12,32 @@
   </template>
   
   <script>
-  import { getAlbum, getAlbumSongs } from '../api/api';
+  import { getArtistSongs } from '../api/api';
   
   export default {
     data() {
       return {
-        album: null,
+        artist: null,
         songs: [],
       };
     },
     mounted() {
-      const albumId = this.$route.params.id;
-      this.fetchAlbum(albumId);
-      this.fetchSongs(albumId);
+      const artistId = this.$route.params.id;
+      this.fetchArtist(artistId);
+      this.fetchSongs(artistId);
     },
     methods: {
-      async fetchAlbum(id) {
+      async fetchArtist(id) {
         try {
-          const response = await getAlbum(id);
-          this.album = response.data;
+          const response = await getArtistSongs(id);
+          this.artist = response.data;
         } catch (error) {
-          console.error("Error fetching album details:", error);
+          console.error("Error fetching artist details:", error);
         }
       },
       async fetchSongs(id) {
         try {
-          const response = await getAlbumSongs(id);
+          const response = await getArtistSongs(id);
           this.songs = response.data;
         } catch (error) {
           console.error("Error fetching songs:", error);
@@ -48,7 +48,7 @@
   </script>
   
   <style scoped>
-  .album-details {
+  .artist-details {
     padding: 20px;
   }
   

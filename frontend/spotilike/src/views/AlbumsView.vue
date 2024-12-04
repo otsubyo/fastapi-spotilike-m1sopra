@@ -1,15 +1,31 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div>
+    <h2>Albums</h2>
+    <ul>
+      <li v-for="album in albums" :key="album.album_id">
+        <router-link :to="'/albums/' + album.album_id">{{ album.title }}</router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+<script>
+import { getAlbums } from '../api';
+
+export default {
+  data() {
+    return {
+      albums: [],
+    };
+  },
+  created() {
+    getAlbums()
+      .then(response => {
+        this.albums = response.data;
+      })
+      .catch(error => {
+        console.error("Il y a eu une erreur lors de la récupération des albums:", error);
+      });
+  },
+};
+</script>

@@ -98,7 +98,6 @@ class Track(SQLModel, table=True):
     title: str = Field(max_length=255, nullable=False)
     duration: Optional[time] = Field(default=None)
     album_id: int = Field(foreign_key="album.album_id")
-    album_id: int = Field(foreign_key="album.album_id")
 
     album: Optional[Album] = Relationship(back_populates="tracks")
     track_artists: List["TrackArtist"] = Relationship(back_populates="track")
@@ -199,7 +198,7 @@ def update_album(id: int, album_data: Album, session: Session = Depends(get_sess
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-    for key, value in album_data.obj.model_dump(exclude_unset=True).items():
+    for key, value in album_data.model_dump(exclude_unset=True).items():
         setattr(album, key, value)
     session.commit()
     session.refresh(album)
@@ -224,7 +223,7 @@ def update_genre(id: int, genre_data: Genre, session: Session = Depends(get_sess
     genre = session.get(Genre, id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
-    for key, value in genre_data.obj.model_dump(exclude_unset=True).items():
+    for key, value in genre_data.model_dump(exclude_unset=True).items():
         setattr(genre, key, value)
     session.commit()
     session.refresh(genre)
@@ -248,7 +247,7 @@ def update_artist(id: int, artist_data: Artist, session: Session = Depends(get_s
     artist = session.get(Artist, id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
-    for key, value in artist_data.obj.model_dump(exclude_unset=True).items():
+    for key, value in artist_data.model_dump(exclude_unset=True).items():
         setattr(artist, key, value)
     session.commit()
     session.refresh(artist)

@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Session, create_engine, select, Relationship
 from datetime import datetime, timedelta
+from sqlalchemy import text
 import jwt
 from typing import List, Optional
 from datetime import time, date, timezone, timedelta
@@ -73,6 +74,17 @@ class Artist(SQLModel, table=True):
     albums: List["Album"] = Relationship(back_populates="artist")
     track_artists: List["TrackArtist"] = Relationship(back_populates="artist")
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # Genre Table
 class Genre(SQLModel, table=True):
     genre_id: Optional[int] = Field(default=None, primary_key=True)
@@ -80,6 +92,17 @@ class Genre(SQLModel, table=True):
     description: Optional[str] = Field(default=None)
 
     track_genres: List["TrackGenre"] = Relationship(back_populates="genre")
+
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
 
 # Album Table
 class Album(SQLModel, table=True):
@@ -92,6 +115,17 @@ class Album(SQLModel, table=True):
     artist: Optional[Artist] = Relationship(back_populates="albums")
     tracks: List["Track"] = Relationship(back_populates="album")
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # Track Table
 class Track(SQLModel, table=True):
     track_id: Optional[int] = Field(default=None, primary_key=True)
@@ -103,6 +137,17 @@ class Track(SQLModel, table=True):
     track_artists: List["TrackArtist"] = Relationship(back_populates="track")
     track_genres: List["TrackGenre"] = Relationship(back_populates="track")
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # Track-Artist Relationship Table
 class TrackArtist(SQLModel, table=True):
     track_id: int = Field(foreign_key="track.track_id", primary_key=True)
@@ -112,6 +157,18 @@ class TrackArtist(SQLModel, table=True):
     track: Optional[Track] = Relationship(back_populates="track_artists")
     artist: Optional[Artist] = Relationship(back_populates="track_artists")
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP'),
+                          "server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # Track-Genre Relationship Table
 class TrackGenre(SQLModel, table=True):
     track_id: int = Field(foreign_key="track.track_id", primary_key=True)
@@ -120,6 +177,17 @@ class TrackGenre(SQLModel, table=True):
     track: Optional[Track] = Relationship(back_populates="track_genres")
     genre: Optional[Genre] = Relationship(back_populates="track_genres")
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # User Table
 class User(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, primary_key=True)
@@ -127,10 +195,21 @@ class User(SQLModel, table=True):
     password: str = Field(nullable=False)
     email: str = Field(max_length=255, nullable=False, unique=True)
 
+    added_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), 
+        sa_column_kwargs={"server_default": text('CURRENT_TIMESTAMP')}
+    )
+    updated_at: Optional[datetime] = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column_kwargs={
+            "onupdate": text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        }
+    )
+
 # --- FastAPI ---
 
 # Application FastAPI avec gestionnaire lifespan
-def lifespan(app: FastAPI):
+def lifespan(app2: FastAPI):
     # Code à exécuter au démarrage
     print("Démarrage de l'application...")
     init_db()
@@ -138,7 +217,7 @@ def lifespan(app: FastAPI):
     # Code à exécuter à l'arrêt
     print("Arrêt de l'application...")
     
-app = FastAPI(
+app2 = FastAPI(
     lifespan=lifespan,
     title="Mon Application API",
     description="Documentation de l'API avec Swagger UI",
@@ -147,25 +226,25 @@ app = FastAPI(
 )
 
 # --- Endpoints Albums ---
-@app.get("/api/albums/")
+@app2.get("/api/albums/")
 def get_albums(session: Session = Depends(get_session)):
     return session.exec(select(Album)).all()
 
-@app.get("/api/albums/{id}")
+@app2.get("/api/albums/{id}")
 def get_album(id: int, session: Session = Depends(get_session)):
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
     return album
 
-@app.get("/api/albums/{id}/songs")
+@app2.get("/api/albums/{id}/songs")
 def get_album_songs(id: int, session: Session = Depends(get_session)):
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
     return session.exec(select(Track).where(Track.album_id == id)).all()
 
-@app.post("/api/albums/{id}/songs")
+@app2.post("/api/albums/{id}/songs")
 def add_song_to_album(id: int, track: Track, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     album = session.get(Album, id)
     if not album:
@@ -174,7 +253,8 @@ def add_song_to_album(id: int, track: Track, session: Session = Depends(get_sess
     new_track = Track(
         title=track.title,
         duration=track.duration,
-        album_id=id
+        album_id=id,
+        added_at=datetime.now(timezone.utc)
     )
     session.add(new_track)
     try:
@@ -186,51 +266,53 @@ def add_song_to_album(id: int, track: Track, session: Session = Depends(get_sess
     
     return new_track
 
-@app.post("/api/albums/")
+@app2.post("/api/albums/")
 def add_album(album: Album, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
+    album.added_at = datetime.now(timezone.utc)
     session.add(album)
     session.commit()
     session.refresh(album)
     return album
 
-@app.put("/api/albums/{id}")
+@app2.put("/api/albums/{id}")
 def update_album(id: int, album_data: Album, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
     for key, value in album_data.model_dump(exclude_unset=True).items():
         setattr(album, key, value)
+    album.updated_at = datetime.now(timezone.utc)
     session.commit()
     session.refresh(album)
     return album
 
-@app.delete("/api/albums/{id}")
+@app2.delete("/api/albums/{id}")
 def delete_album(id: int, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     album = session.get(Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-    session.delete(album)
     session.commit()
     return {"message": "Album deleted successfully"}
 
 # --- Endpoints Genres ---
-@app.get("/api/genres/")
+@app2.get("/api/genres/")
 def get_genres(session: Session = Depends(get_session)):
     return session.exec(select(Genre)).all()
 
-@app.put("/api/genres/{id}")
+@app2.put("/api/genres/{id}")
 def update_genre(id: int, genre_data: Genre, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     genre = session.get(Genre, id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
     for key, value in genre_data.model_dump(exclude_unset=True).items():
         setattr(genre, key, value)
+    genre.updated_at = datetime.now(timezone.utc)
     session.commit()
     session.refresh(genre)
     return genre
 
 # --- Endpoints Artists ---
-@app.get("/api/artists/{id}/songs")
+@app2.get("/api/artists/{id}/songs")
 def get_artist_songs(id: int, session: Session = Depends(get_session)):
     # Requête pour trouver les morceaux liés à cet artiste
     tracks = session.exec(
@@ -242,28 +324,28 @@ def get_artist_songs(id: int, session: Session = Depends(get_session)):
     
     return tracks
 
-@app.put("/api/artists/{id}")
+@app2.put("/api/artists/{id}")
 def update_artist(id: int, artist_data: Artist, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     artist = session.get(Artist, id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
     for key, value in artist_data.model_dump(exclude_unset=True).items():
         setattr(artist, key, value)
+    artist.updated_at = datetime.now(timezone.utc)
     session.commit()
     session.refresh(artist)
     return artist
 
-@app.delete("/api/artists/{id}")
+@app2.delete("/api/artists/{id}")
 def delete_artist(id: int, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     artist = session.get(Artist, id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
-    session.delete(artist)
     session.commit()
     return {"message": "Artist deleted successfully"}
 
 # --- Endpoints Users ---
-@app.post("/api/users/signup")
+@app2.post("/api/users/signup")
 def signup(user: User, session: Session = Depends(get_session)):
     # Vérifiez si l'utilisateur ou l'email existe déjà
     existing_user = session.exec(select(User).where(User.username == user.username)).first()
@@ -278,6 +360,7 @@ def signup(user: User, session: Session = Depends(get_session)):
     user.password = hash_password(user.password)
 
     # Insérez le nouvel utilisateur
+    user.added_at = datetime.now(timezone.utc)
     session.add(user)
     try:
         session.commit()
@@ -288,7 +371,7 @@ def signup(user: User, session: Session = Depends(get_session)):
     
     return {"message": "User created successfully", "user_id": user.user_id}
 
-@app.post("/api/users/login")
+@app2.post("/api/users/login")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session)
@@ -299,12 +382,10 @@ def login(
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.delete("/api/users/{id}")
+@app2.delete("/api/users/{id}")
 def delete_user(id: int, session: Session = Depends(get_session), token: TokenData = Depends(verify_token)):
     user = session.get(User, id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    session.delete(user)
     session.commit()
     return {"message": "User deleted successfully"}
-

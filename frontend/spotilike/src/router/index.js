@@ -1,21 +1,20 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import AlbumsView from "../views/AlbumsView.vue";
-import ArtistsView from "../views/ArtistsView.vue";
-import AlbumDetails from "../components/AlbumDetails.vue";
-import ArtistDetails from "../components/ArtistDetails.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import AlbumList from '@/components/AlbumList.vue'
+import AlbumDetail from '@/components/AlbumDetail.vue'
+import ArtistList from '@/components/ArtistList.vue'
+import ArtistDetail from '@/components/ArtistDetails.vue'
 
 const routes = [
-  { path: "/", component: HomeView, name: "home" },
-  { path: "/albums", component: AlbumsView, name: "albums" },
-  { path: "/albums/:id", component: AlbumDetails, name: "album-details" },
-  { path: "/artists", component: ArtistsView, name: "artists" },
-  { path: "/artists/:id", component: ArtistDetails, name: "artist-details" },
-];
+  { path: '/', redirect: '/albums' },
+  { path: '/albums', component: AlbumList },
+  { path: '/albums/:id', component: AlbumDetail },
+  { path: '/artists', component: ArtistList },
+  { path: '/artists/:id', component: ArtistDetail },
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
-export default router;
+export default router

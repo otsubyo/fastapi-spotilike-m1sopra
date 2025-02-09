@@ -1,41 +1,60 @@
 <template>
-    <v-container class="bg-gradient-to-b from-green-700 to-black text-white min-h-screen">
-      <v-row>
-        <v-col cols="12" md="4">
-          <v-img :src="artist.avatar" height="300px"></v-img>
-        </v-col>
-        <v-col cols="12" md="8">
-          <h1 class="text-3xl font-bold">{{ artist.name }}</h1>
-          <p>{{ artist.biography }}</p>
-          <h2 class="text-xl mt-4">Morceaux :</h2>
-          <v-list>
-            <v-list-item v-for="track in tracks" :key="track.track_id">
-              {{ track.title }}
-            </v-list-item>
-          </v-list>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script>
-  import { getArtist, getArtistSongs } from '../api';
-  
-  export default {
-    data() {
-      return { artist: {}, tracks: [] };
-    },
-    async created() {
-      const artistId = this.$route.params.id;
+  <v-container>
+    <v-btn color="primary" to="/artists" class="mb-3">⬅ Retour à la liste des artistes</v-btn>
+
+    <v-row>
+      <v-col cols="12" md="4">
+        <!-- Image de l'artiste -->
+        <img :src="artist.avatar" alt="Artist Avatar" width="100%" style="border-radius: 8px;">
+      </v-col>
+
+      <v-col cols="12" md="8">
+        <h1 class="text-h4">{{ artist.name }}</h1>
+        <p class="text-body-1">{{ artist.biography }}</p>
+      </v-col>
+    </v-row>
+
+    <h2 class="text-h5 mt-5 text-white">Morceaux de l'artiste</h2>
+    <v-row v-if="tracks.length > 0">
+      <v-col v-for="track in tracks" :key="track.id" cols="12" sm="6" md="4">
+        <v-card>
+          <v-card-title>{{ track.title }}</v-card-title>
+          <v-card-subtitle>{{ track.duration }} min</v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
+    <p v-else class="text-body-2">Aucun morceau trouvé.</p>
+  </v-container>
+</template>
+
+<script>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { getArtist, getArtistSongs } from "@/api";
+
+export default {
+  setup() {
+    const route = useRoute();
+    const artist = ref({});
+    const tracks = ref([]);
+
+    onMounted(async () => {
+      const artistId = route.params.id;
       try {
-        const artistRes = await getArtist(artistId);
-        const tracksRes = await getArtistSongs(artistId);
-        this.artist = artistRes.data;
-        this.tracks = tracksRes.data;
+        // ✅ Récupère les infos de l'artiste
+        const response = await getArtist(artistId);
+        artist.value = response.data;
+
+        // ✅ Récupère les morceaux de l'artiste
+        const tracksResponse = await getArtistSongs(artistId);
+        tracks.value = tracksResponse.data;
       } catch (error) {
-        console.error("Erreur :", error);
+        console.error("Erreur lors du chargement des détails de l'artiste :", error);
       }
-    },
-  };
-  </script>
-  
+    });
+
+    return { artist, tracks };
+  }
+};
+</script>
+

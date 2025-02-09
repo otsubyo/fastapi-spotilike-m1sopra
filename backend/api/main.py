@@ -126,7 +126,7 @@ def update_genre(id: int, genre_data: model.Genre, session: Session = Depends(da
     session.refresh(genre)
     return genre
 
-@app.get("/api/artists/")
+# --- Endpoints Artistes ---
 @app.get("/api/artists/")
 def get_artists(session: Session = Depends(database.get_session)):
     artists = session.exec(select(model.Artist)).all()
@@ -136,10 +136,22 @@ def get_artists(session: Session = Depends(database.get_session)):
 
     for artist in artists:
         # ✅ Vérifie si le chemin est déjà correct pour éviter la duplication
-        if not artist.avatar.startswith("/images/artists/"):
-            artist.avatar = f"/images/artists/{artist.avatar}" if artist.avatar else "/images/artists/default.jpg"
+        if artist.avatar and not artist.avatar.startswith("/images/artists/"):
+            artist.avatar = f"/images/artists/{artist.avatar}"
+        elif not artist.avatar:
+            artist.avatar = "/images/artists/default.jpg"
 
     return artists
+
+@app.get("/api/artists/{id}")
+def get_artist(id: int, session: Session = Depends(database.get_session)):
+    artist = session.get(model.Artist, id)
+    
+    if not artist:
+        raise HTTPException(status_code=404, detail="Artiste introuvable")
+
+    # ✅ Ici, on ne modifie PAS `artist.avatar`, car c'est déjà fait dans `get_artists()`
+    return artist
 
 
 @app.get("/api/artists/{id}/songs")

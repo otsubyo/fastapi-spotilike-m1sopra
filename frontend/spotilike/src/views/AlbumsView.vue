@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2 class="text-center text-white">Liste des albums</h2>
+    <h2 class="text-center text-white title-spacing">Liste des albums</h2>
     <v-row v-if="albums.length > 0">
       <v-col v-for="album in albums" :key="album.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="mx-auto" max-width="344">
@@ -41,3 +41,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.title-spacing {
+  margin-bottom: 100px; /* Ajoute un grand espace sous le titre */
+}
+
+.v-row {
+  row-gap: 30px; /* Espace entre les cartes */
+}
+</style>

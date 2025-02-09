@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2 class="text-center text-white">Liste des artistes</h2>
+    <h2 class="text-center text-white title-spacing">Liste des artistes</h2>
     <v-row v-if="artists.length > 0">
       <v-col v-for="artist in artists" :key="artist.artist_id" cols="12" sm="6" md="4" lg="3">
         <v-card class="mx-auto" max-width="344">
@@ -32,7 +32,6 @@ export default {
     onMounted(async () => {
       try {
         const response = await getArtists();
-        console.log("Données reçues de l'API :", response);
 
         // ✅ EXTRACTION DU TABLEAU `data`
         if (response.data && Array.isArray(response.data)) {
@@ -51,3 +50,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.title-spacing {
+  margin-bottom: 100px; /* Augmente l'espace sous le titre */
+}
+
+.v-row {
+  row-gap: 30px; /* Espace entre les cartes */
+}
+</style>

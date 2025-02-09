@@ -24,5 +24,14 @@ export const getAlbumSongs = async (albumId) => {
 
 export const getAlbum = (id) => axios.get(`${API_URL}/albums/${id}`);
 export const getArtists = () => axios.get(`${API_URL}/artists/`);
-export const getArtist = (id) => axios.get(`${API_URL}/artists/${id}`);
-export const getArtistSongs = (artistId) => axios.get(`${API_URL}/artists/${artistId}/songs`);
+
+// Récupérer un artiste par son ID
+export const getArtist = (id) => {
+  return axios.get(`http://localhost:8000/api/artists/${id}`);
+};
+
+// Récupérer les morceaux d'un artiste
+export const getArtistSongs = (id) => {
+  return axios.get(`${API_URL}/artists/${id}/songs`);
+};
+

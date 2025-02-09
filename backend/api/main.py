@@ -126,7 +126,22 @@ def update_genre(id: int, genre_data: model.Genre, session: Session = Depends(da
     session.refresh(genre)
     return genre
 
-# --- Endpoints Artists ---
+@app.get("/api/artists/")
+@app.get("/api/artists/")
+def get_artists(session: Session = Depends(database.get_session)):
+    artists = session.exec(select(model.Artist)).all()
+
+    if not artists:
+        return []  # ✅ Retourne un tableau vide si aucun artiste
+
+    for artist in artists:
+        # ✅ Vérifie si le chemin est déjà correct pour éviter la duplication
+        if not artist.avatar.startswith("/images/artists/"):
+            artist.avatar = f"/images/artists/{artist.avatar}" if artist.avatar else "/images/artists/default.jpg"
+
+    return artists
+
+
 @app.get("/api/artists/{id}/songs")
 def get_artist_songs(id: int, session: Session = Depends(database.get_session)):
     # Requête pour trouver les morceaux liés à cet artiste

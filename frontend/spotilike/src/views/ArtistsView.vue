@@ -1,32 +1,53 @@
 <template>
-    <v-container>
-      <h2 class="text-h4 text-white text-center mb-5">Liste des artistes</h2>
-      <v-row>
-        <v-col v-for="artist in artists" :key="artist.id" cols="12" sm="6" md="3">
-          <v-card @click="$router.push(`/artists/${artist.id}`)">
-            <v-img :src="artist.image" height="200px" cover></v-img>
-            <v-card-title>{{ artist.name }}</v-card-title>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script>
-  import { ref, onMounted } from 'vue';
-  import { getArtists } from '../api'; // API backend
-  
-  export default {
-    setup() {
-      const artists = ref([]);
-  
-      onMounted(async () => {
+  <v-container>
+    <h2 class="text-center text-white">Liste des artistes</h2>
+    <v-row v-if="artists.length > 0">
+      <v-col v-for="artist in artists" :key="artist.artist_id" cols="12" sm="6" md="4" lg="3">
+        <v-card class="mx-auto" max-width="344">
+          <!-- Image de l'artiste -->
+          <img :src="`http://localhost:8000${artist.avatar}`" alt="Artist Avatar" height="200px" style="width:100%; object-fit: cover;">
+          
+          <v-card-title>{{ artist.name }}</v-card-title>
+          <v-card-subtitle>{{ artist.biography }}</v-card-subtitle>
+
+          <v-card-actions>
+            <v-btn color="primary" :to="'/artists/' + artist.artist_id">Voir Détails</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <p v-else class="text-center text-white">Aucun artiste trouvé.</p>
+  </v-container>
+</template>
+
+<script>
+import { ref, onMounted } from 'vue';
+import { getArtists } from '@/api';
+
+export default {
+  setup() {
+    const artists = ref([]);
+
+    onMounted(async () => {
+      try {
         const response = await getArtists();
-        artists.value = response.data;
-      });
-  
-      return { artists };
-    },
-  };
-  </script>
-  
+        console.log("Données reçues de l'API :", response);
+
+        // ✅ EXTRACTION DU TABLEAU `data`
+        if (response.data && Array.isArray(response.data)) {
+          artists.value = response.data;
+        } else {
+          console.warn("L'API a retourné un format inattendu :", response);
+          artists.value = []; // ✅ Évite une erreur si la donnée est incorrecte
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des artistes :", error);
+        artists.value = []; // ✅ Évite que Vue essaie de mapper sur `undefined`
+      }
+    });
+
+    return { artists };
+  }
+};
+</script>

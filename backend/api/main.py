@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 import database, JWT_config, model
 
@@ -20,6 +21,15 @@ app = FastAPI(
     description="Documentation de l'API avec Swagger UI",
     version="1.0.0",
     docs_url="/docs",  # URL pour Swagger UI
+)
+
+# --- Ajout de CORS ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174"],  # Frontend autorisé (change si besoin)
+    allow_credentials=True,
+    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, PUT, DELETE)
+    allow_headers=["*"],  # Autorise tous les headers
 )
 
 # --- Endpoints Albums ---

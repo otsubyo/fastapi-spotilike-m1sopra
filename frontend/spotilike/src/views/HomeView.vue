@@ -1,6 +1,7 @@
 <template>
   <v-container class="d-flex flex-column align-center justify-center text-center home-container">
-    <v-img src="frontend/spotilike/public/logo.png" max-width="120" class="mb-5"></v-img>
+    <img src="/logo.png" alt="Logo Spotilike" width="120" class="mb-5 logo">
+
     <h1 class="text-h4 text-white">Bienvenue sur Spotilike</h1>
 
     <div class="mt-5">
@@ -11,7 +12,6 @@
     <p class="text-white mt-10">Fait par BELLER Willy et PREMI Carl</p>
   </v-container>
 </template>
-
 
 <style scoped>
 .home-container {

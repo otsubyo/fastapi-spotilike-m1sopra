@@ -4,11 +4,7 @@
     <v-row v-if="albums.length > 0">
       <v-col v-for="album in albums" :key="album.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="mx-auto" max-width="344">
-          <v-img
-            :src="getAlbumImage(album.image)"
-            height="200px"
-            contain
-          ></v-img>
+          <img :src="album.image" alt="Album cover" height="200px" style="width:100%; object-fit: cover;">
           <v-card-title>{{ album.title }}</v-card-title>
           <v-card-subtitle>{{ album.artist }}</v-card-subtitle>
           <v-card-actions>
@@ -28,24 +24,20 @@ import { getAlbums } from '@/api';
 export default {
   setup() {
     const albums = ref([]);
+    const baseURL = "http://localhost:8000"; // Base de l'API
+    const defaultImage = "/static/default.jpg"; // Image par défaut
 
     onMounted(async () => {
       albums.value = await getAlbums();
+
+      // Assurer que chaque album a bien une image avec `/static/`
+      albums.value = albums.value.map(album => ({
+        ...album,
+        image: album.cover ? `${baseURL}${album.cover}` : `${baseURL}${defaultImage}`
+      }));
     });
 
-    const getAlbumImage = (imageName) => {
-  try {
-    return new URL(`@/assets/images/albums/${imageName}`, import.meta.url).href;
-  } catch (e) {
-    console.error(`Erreur de chargement de l'image : ${e.message}`);
-    return new URL(`@/assets/images/albums/default.jpg`, import.meta.url).href;
-  }
-};
-
-
-
-
-    return { albums, getAlbumImage };
+    return { albums };
   }
 };
 </script>

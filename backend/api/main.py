@@ -2,17 +2,17 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
+from fastapi.staticfiles import StaticFiles
 import database, JWT_config, model
+import os
 
 # --- FastAPI ---
 
 # Application FastAPI avec gestionnaire lifespan
 def lifespan(app: FastAPI):
-    # Code à exécuter au démarrage
     print("Démarrage de l'application...")
     database.init_db()
-    yield  # Exécution de l'application
-    # Code à exécuter à l'arrêt
+    yield  
     print("Arrêt de l'application...")
     
 app = FastAPI(
@@ -20,17 +20,28 @@ app = FastAPI(
     title="Mon Application API",
     description="Documentation de l'API avec Swagger UI",
     version="1.0.0",
-    docs_url="/docs",  # URL pour Swagger UI
+    docs_url="/docs",  
 )
 
-# --- Ajout de CORS ---
+# --- Configuration CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174"],  # Frontend autorisé (change si besoin)
+    allow_origins=["*"],  # Autorise toutes les origines (change pour + de sécurité)
     allow_credentials=True,
-    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, PUT, DELETE)
-    allow_headers=["*"],  # Autorise tous les headers
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition"]  # Important pour les fichiers statiques
 )
+
+# Définir le chemin du dossier des images
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "public"))
+
+# Vérifier que le dossier existe
+if not os.path.exists(static_dir):
+    raise RuntimeError(f"Le dossier 'public' n'existe pas : {static_dir}")
+
+# Monter le dossier pour servir les images sous "/images/"
+app.mount("/images", StaticFiles(directory=os.path.join(static_dir, "images")), name="images")
 
 # --- Endpoints Albums ---
 @app.get("/api/albums/")

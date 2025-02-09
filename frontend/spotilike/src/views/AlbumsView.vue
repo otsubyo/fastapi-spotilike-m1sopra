@@ -1,11 +1,11 @@
 <template>
-  <v-container class="bg-gradient-to-b from-green-700 to-black text-white min-h-screen">
-    <h1 class="text-3xl font-bold text-center mb-6">Liste des albums</h1>
+  <v-container>
+    <h2 class="text-h4 text-white text-center mb-5">Liste des albums</h2>
     <v-row>
-      <v-col v-for="album in albums" :key="album.album_id" cols="12" sm="6" md="3">
-        <v-card @click="$router.push(`/albums/${album.album_id}`)" class="cursor-pointer">
-          <v-img :src="album.cover" height="200px"></v-img>
-          <v-card-title>{{ album.title }}</v-card-title>
+      <v-col v-for="album in albums" :key="album.id" cols="12" sm="6" md="3">
+        <v-card @click="$router.push(`/albums/${album.id}`)">
+          <v-img :src="album.image" height="200px" cover></v-img>
+          <v-card-title>{{ album.name }}</v-card-title>
         </v-card>
       </v-col>
     </v-row>
@@ -13,19 +13,19 @@
 </template>
 
 <script>
-import { getAlbums } from '../api';
+import { ref, onMounted } from 'vue';
+import { getAlbums } from '../api'; // API backend
 
 export default {
-  data() {
-    return { albums: [] };
-  },
-  async created() {
-    try {
+  setup() {
+    const albums = ref([]);
+
+    onMounted(async () => {
       const response = await getAlbums();
-      this.albums = response.data;
-    } catch (error) {
-      console.error("Erreur :", error);
-    }
+      albums.value = response.data;
+    });
+
+    return { albums };
   },
 };
 </script>

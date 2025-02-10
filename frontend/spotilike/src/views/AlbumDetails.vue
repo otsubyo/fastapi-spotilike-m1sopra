@@ -1,5 +1,5 @@
 <template>
-  <v-container class="album-details">
+  <v-container>
     <v-btn color="primary" to="/albums" class="mb-4">⬅ Retour à la liste</v-btn>
 
     <v-row>
@@ -10,20 +10,20 @@
       </v-col>
 
       <!-- Informations de l'album -->
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="4" class="d-flex flex-column align-start">
         <h1 class="text-h4 font-weight-bold text-white">{{ album.title || "Titre non disponible" }}</h1>
         <p class="text-white text-subtitle-1">Date de sortie : {{ album.release_date || "Date non disponible" }}</p>
 
         <h2 class="text-h5 mt-4 text-white">Morceaux :</h2>
 
-        <!-- Correction ici : vérifier que `tracks` est bien défini -->
-        <v-list v-if="tracks.length > 0">
-  <v-list-item v-for="track in tracks" :key="track.track_id">
-    <v-list-item-title>{{ track.title }}</v-list-item-title>
-    <v-list-item-subtitle>{{ formatDuration(track.duration) }}</v-list-item-subtitle>
-  </v-list-item>
-</v-list>
-
+        <v-list v-if="tracks.length > 0" class="track-list">
+          <v-list-item v-for="track in tracks" :key="track.track_id">
+            <v-list-item-content>
+              <v-list-item-title>{{ track.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ formatDuration(track.duration) }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
 
         <p v-else class="text-white mt-4">Aucun morceau trouvé.</p>
       </v-col>
@@ -78,7 +78,6 @@ export default {
 
 <style scoped>
 .album-details {
-  background: linear-gradient(to bottom, #1db954, #121212);
   min-height: 100vh;
   padding-top: 20px;
   padding-bottom: 40px;
@@ -90,11 +89,28 @@ export default {
   padding: 10px;
 }
 
-.track-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+/* Ajoute un espacement et centre la liste */
+.track-container {
+  max-width: 600px;
+  margin-top: 20px;
+  text-align: center;
 }
 
-.track-item:last-child {
-  border-bottom: none;
+/* Stylisation de la liste des morceaux */
+.track-list {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajoute une largeur fixe et un alignement propre */
+.track-list {
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 </style>

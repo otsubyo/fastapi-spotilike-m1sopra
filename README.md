@@ -35,4 +35,4 @@
 
 4. **Accédez au site sur :**
     ```bash
-  http://localhost:5173
+    http://localhost:5173

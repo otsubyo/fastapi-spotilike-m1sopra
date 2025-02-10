@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-btn color="primary" to="/albums" class="mb-4">⬅ Retour à la liste</v-btn>
+    <v-btn color="primary" to="/albums" class="mb-4">⬅ Retour à la liste des albums</v-btn>
 
     <v-row>
       <!-- Image de l'album -->

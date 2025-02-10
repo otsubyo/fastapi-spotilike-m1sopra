@@ -9,11 +9,11 @@
    pip install -r requirements.txt
 
 3. **Lancez le serveur FastAPI :**
-  ```bash
+    ```bash
   uvicorn main:app --reload
 
 4.**Accédez à la documentation Swagger de l’API :**
-  ```bash
+    ```bash
   http://localhost:8000/docs
 
 
@@ -22,17 +22,17 @@
 ## Launch frontend
 
 1. **Allez dans le dossier du frontend :**
-  ```bash
+    ```bash
   cd frontend
 
 2. **Installez les dépendances avec npm :**
-  ```bash
+    ```bash
   npm install
 
 3. **Lancez le serveur de développement :**
-  ```bash
+    ```bash
   npm run dev
 
 4. **Accédez au site sur :**
-  ```bash
+    ```bash
   http://localhost:5173

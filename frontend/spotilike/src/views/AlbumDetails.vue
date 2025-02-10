@@ -5,37 +5,29 @@
     <v-row>
       <!-- Image de l'album -->
       <v-col cols="12" md="4">
-        <v-img 
-          v-if="album.cover" 
-          :src="album.cover" 
-          alt="Album Cover" 
-          height="300px" 
-          contain 
-          class="album-cover"
-        ></v-img>
-        <v-img 
-          v-else 
-          src="/static/images/albums/default.jpg" 
-          alt="Image par défaut" 
-          height="300px" 
-          contain 
-          class="album-cover"
-        ></v-img>
+        <v-img v-if="album.cover" :src="album.cover" alt="Album Cover" height="300px" contain></v-img>
+        <v-img v-else src="/static/images/albums/default.jpg" alt="Image par défaut" height="300px" contain></v-img>
       </v-col>
 
       <!-- Informations de l'album -->
       <v-col cols="12" md="4" class="d-flex flex-column align-start">
-        <h1 class="text-h4 font-weight-bold text-white">{{ album.title || "Titre non disponible" }}</h1>
-        <p class="text-white text-subtitle-1">Date de sortie : {{ album.release_date || "Date non disponible" }}</p>
+        <h1 class="text-h4 font-weight-bold text-white">
+          {{ album.title || "Titre non disponible" }}
+        </h1>
+        <p class="text-white text-subtitle-1">
+          Date de sortie : {{ album.release_date || "Date non disponible" }}
+        </p>
 
         <h2 class="text-h5 mt-4 text-white">Morceaux :</h2>
 
         <v-list v-if="tracks.length > 0" class="track-list">
-          <v-list-item v-for="track in tracks" :key="track.track_id" class="track-item">
-            <v-list-item-content>
-              <v-list-item-title class="text-white">{{ track.title }}</v-list-item-title>
-              <v-list-item-subtitle class="text-white">{{ formatDuration(track.duration) }}</v-list-item-subtitle>
-            </v-list-item-content>
+          <v-list-item v-for="track in tracks" :key="track.track_id">
+            <v-list-item-title class="text-white">
+              {{ track.title }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="text-white">
+              {{ formatDuration(track.duration) }}
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
 
@@ -64,14 +56,9 @@ export default {
         const albumRes = await getAlbum(albumId);
         album.value = albumRes.data || {};
 
-        console.log("📀 Album récupéré :", album.value);
-
         // 🔍 Vérifier si l'API retourne bien des morceaux
         const tracksRes = await getAlbumSongs(albumId);
         tracks.value = tracksRes.data || [];
-
-        console.log("🎵 Morceaux récupérés (RAW) :", tracksRes.data);
-        console.log("🎵 Morceaux stockés dans Vue :", tracks.value);
       } catch (error) {
         console.error("❌ Erreur lors du chargement des données :", error);
       }
@@ -88,7 +75,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .album-details {

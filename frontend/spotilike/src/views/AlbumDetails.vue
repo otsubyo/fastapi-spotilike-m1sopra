@@ -5,8 +5,22 @@
     <v-row>
       <!-- Image de l'album -->
       <v-col cols="12" md="4">
-        <v-img v-if="album.cover" :src="album.cover" alt="Album Cover" height="300px" contain></v-img>
-        <v-img v-else src="/static/images/albums/default.jpg" alt="Image par défaut" height="300px" contain></v-img>
+        <v-img 
+          v-if="album.cover" 
+          :src="album.cover" 
+          alt="Album Cover" 
+          height="300px" 
+          contain 
+          class="album-cover"
+        ></v-img>
+        <v-img 
+          v-else 
+          src="/static/images/albums/default.jpg" 
+          alt="Image par défaut" 
+          height="300px" 
+          contain 
+          class="album-cover"
+        ></v-img>
       </v-col>
 
       <!-- Informations de l'album -->
@@ -17,10 +31,10 @@
         <h2 class="text-h5 mt-4 text-white">Morceaux :</h2>
 
         <v-list v-if="tracks.length > 0" class="track-list">
-          <v-list-item v-for="track in tracks" :key="track.track_id">
+          <v-list-item v-for="track in tracks" :key="track.track_id" class="track-item">
             <v-list-item-content>
-              <v-list-item-title>{{ track.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ formatDuration(track.duration) }}</v-list-item-subtitle>
+              <v-list-item-title class="text-white">{{ track.title }}</v-list-item-title>
+              <v-list-item-subtitle class="text-white">{{ formatDuration(track.duration) }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -105,12 +119,22 @@ export default {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Ajoute une largeur fixe et un alignement propre */
+.album-cover {
+  border-radius: 8px;
+}
+
 .track-list {
-  max-width: 500px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1); /* Fond semi-transparent */
   border-radius: 8px;
   padding: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px; /* Ajuster la largeur pour ne pas prendre toute la page */
+}
+
+.track-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.track-item:last-child {
+  border-bottom: none;
 }
 </style>

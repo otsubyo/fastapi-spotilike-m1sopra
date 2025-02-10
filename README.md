@@ -20,7 +20,10 @@
     ```bash
     uvicorn main:app --reload
 
-6. **Accédez à la documentation Swagger de l’API :**
+6. **Ouvrez votre serveur de base de donnée mysql et lancez le script SeedData.sql sur le schema "spotilike_db_carl_willy"**  
+
+
+7. **Accédez à la documentation Swagger de l’API :**
     ```bash
     http://localhost:8000/docs
 

@@ -1,9 +1,32 @@
-# --- Configuration de la base de données ---
 import bcrypt
+import pymysql
 from sqlmodel import SQLModel, Session, create_engine
 
+# --- Informations de connexion ---
+DB_USER = "root"
+DB_PASSWORD = "root"
+DB_HOST = "localhost"
+DB_PORT = "3306"
+DB_NAME = "spotilikedb_carl_willy"
 
-DATABASE_URL = "mysql+pymysql://root:root@localhost:3306/MusicDB"
+# --- Création du schéma si inexistant ---
+def create_database():
+    connection = pymysql.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        port=int(DB_PORT),
+    )
+    with connection.cursor() as cursor:
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
+    connection.commit()
+    connection.close()
+
+# Exécuter la création du schéma
+create_database()
+
+# --- Configuration de la base de données ---
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 engine = create_engine(DATABASE_URL, echo=True)
 
 def init_db():

@@ -12,7 +12,7 @@
     ```bash
     uvicorn main:app --reload
 
-4.**Accédez à la documentation Swagger de l’API :**
+4. **Accédez à la documentation Swagger de l’API :**
     ```bash
     http://localhost:8000/docs
 

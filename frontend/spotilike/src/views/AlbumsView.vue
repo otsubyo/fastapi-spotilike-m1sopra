@@ -8,7 +8,7 @@
           <v-card-title>{{ album.title }}</v-card-title>
           <v-card-subtitle>{{ album.artist }}</v-card-subtitle>
           <v-card-actions>
-            <v-btn color="primary" :to="'/albums/' + album.id">Voir Détails</v-btn>
+            <v-btn color="primary" :to="'/albums/' + album.album_id">Voir Les détails de l'album</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 from fastapi.staticfiles import StaticFiles
 import database, JWT_config, model
+from datetime import time
 import os
 
 # --- FastAPI ---
@@ -60,7 +61,18 @@ def get_album_songs(id: int, session: Session = Depends(database.get_session)):
     album = session.get(model.Album, id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-    return session.exec(select(model.Track).where(model.Track.album_id == id)).all()
+
+    songs = session.exec(select(model.Track).where(model.Track.album_id == id)).all()
+
+    # ✅ Convertit le temps (hh:mm:ss) en secondes (int)
+    for song in songs:
+        if isinstance(song.duration, time):
+            song.duration = song.duration.hour * 3600 + song.duration.minute * 60 + song.duration.second
+        else:
+            song.duration = 0  # Par défaut, 0 si pas de durée
+
+    return songs
+
 
 @app.post("/api/albums/{id}/songs")
 def add_song_to_album(id: int, track: model.Track, session: Session = Depends(database.get_session), token: JWT_config.TokenData = Depends(JWT_config.verify_token)):

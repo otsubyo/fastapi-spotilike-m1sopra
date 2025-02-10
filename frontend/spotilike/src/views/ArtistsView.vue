@@ -11,7 +11,7 @@
           <v-card-subtitle>{{ artist.biography }}</v-card-subtitle>
 
           <v-card-actions>
-            <v-btn color="primary" :to="'/artists/' + artist.artist_id">Voir Détails</v-btn>
+            <v-btn color="primary" :to="'/artists/' + artist.artist_id">Voir les détails de l'artiste</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

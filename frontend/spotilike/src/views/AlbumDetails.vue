@@ -1,72 +1,87 @@
 <template>
-  <v-container class="bg-gradient-to-b from-green-700 to-black text-white min-h-screen py-10">
+  <v-container class="album-details">
+    <v-btn color="primary" to="/albums" class="mb-4">⬅ Retour à la liste</v-btn>
+
     <v-row>
+      <!-- Image de l'album -->
       <v-col cols="12" md="4">
-        <v-img 
-          :src="album.cover" 
-          alt="Album Cover"
-          height="300px"
-          contain
-          class="album-cover"
-        ></v-img>
+        <v-img v-if="album.cover" :src="album.cover" alt="Album Cover" height="300px" contain></v-img>
+        <v-img v-else src="/static/images/albums/default.jpg" alt="Image par défaut" height="300px" contain></v-img>
       </v-col>
+
+      <!-- Informations de l'album -->
       <v-col cols="12" md="8">
-        <h1 class="text-3xl font-bold mb-4">{{ album.title }}</h1>
-        <p class="text-lg">🗓 Date de sortie : {{ album.release_date }}</p>
-        
-        <h2 class="text-xl mt-6 mb-3 font-semibold">Morceaux :</h2>
-        <v-list class="track-list">
-          <v-list-item 
-            v-for="track in tracks" 
-            :key="track.track_id"
-            class="track-item"
-          >
-            <v-list-item-content>
-              <v-list-item-title class="text-lg font-medium">{{ track.title }}</v-list-item-title>
-              <v-list-item-subtitle class="text-sm">Durée : {{ track.duration }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <h1 class="text-h4 font-weight-bold text-white">{{ album.title || "Titre non disponible" }}</h1>
+        <p class="text-white text-subtitle-1">Date de sortie : {{ album.release_date || "Date non disponible" }}</p>
+
+        <h2 class="text-h5 mt-4 text-white">Morceaux :</h2>
+
+        <!-- Correction ici : vérifier que `tracks` est bien défini -->
+        <v-list v-if="tracks.length > 0">
+  <v-list-item v-for="track in tracks" :key="track.track_id">
+    <v-list-item-title>{{ track.title }}</v-list-item-title>
+    <v-list-item-subtitle>{{ formatDuration(track.duration) }}</v-list-item-subtitle>
+  </v-list-item>
+</v-list>
+
+
+        <p v-else class="text-white mt-4">Aucun morceau trouvé.</p>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { getAlbum, getAlbumSongs } from "../api";
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { getAlbum, getAlbumSongs } from '../api';
 
 export default {
-  data() {
-    return { album: {}, tracks: [] };
-  },
-  async created() {
-    const albumId = this.$route.params.id;
-    try {
-      const albumRes = await getAlbum(albumId);
-      const tracksRes = await getAlbumSongs(albumId);
+  setup() {
+    const album = ref({}); // ✅ Initialisation correcte
+    const tracks = ref([]); // ✅ Initialisation avec un tableau vide
+    const route = useRoute();
 
-      // Vérifier si le chemin de l'image est correct
-      const baseURL = "http://localhost:8000";
-      this.album = {
-        ...albumRes.data,
-        cover: albumRes.data.cover.startsWith("/static/")
-          ? `${baseURL}${albumRes.data.cover}`
-          : `${baseURL}/static${albumRes.data.cover}`
-      };
+    onMounted(async () => {
+      const albumId = route.params.id;
 
-      this.tracks = tracksRes.data;
-    } catch (error) {
-      console.error("Erreur :", error);
-    }
-  },
+      try {
+        // 🔍 Vérifier si l'API retourne bien un album
+        const albumRes = await getAlbum(albumId);
+        album.value = albumRes.data || {};
+
+        console.log("📀 Album récupéré :", album.value);
+
+        // 🔍 Vérifier si l'API retourne bien des morceaux
+        const tracksRes = await getAlbumSongs(albumId);
+        tracks.value = tracksRes.data || [];
+
+        console.log("🎵 Morceaux récupérés (RAW) :", tracksRes.data);
+        console.log("🎵 Morceaux stockés dans Vue :", tracks.value);
+      } catch (error) {
+        console.error("❌ Erreur lors du chargement des données :", error);
+      }
+    });
+
+    const formatDuration = (duration) => {
+      if (!duration) return "Durée inconnue";
+      const minutes = Math.floor(duration / 60);
+      const seconds = duration % 60;
+      return `${minutes} min ${seconds.toString().padStart(2, "0")} sec`;
+    };
+
+    return { album, tracks, formatDuration };
+  }
 };
 </script>
 
 
 <style scoped>
-.album-cover {
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+.album-details {
+  background: linear-gradient(to bottom, #1db954, #121212);
+  min-height: 100vh;
+  padding-top: 20px;
+  padding-bottom: 40px;
 }
 
 .track-list {

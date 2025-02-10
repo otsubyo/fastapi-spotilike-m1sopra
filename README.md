@@ -2,17 +2,21 @@
 
 ## Launch backend  
 
-1. **Assurez-vous que votre base de données SQL est en cours d’exécution** (si nécessaire).  
+1. **Assurez-vous que votre base de données SQL est en cours d’exécution** (si nécessaire).
 
-2. **Installez les dépendances Python :** 
+2. **Allez dans le dossier du backend :**
+    ```bash
+    cd cd backend/api
+
+3. **Installez les dépendances Python :** 
     ```bash
     pip install -r requirements.txt
 
-3. **Lancez le serveur FastAPI :**
+4. **Lancez le serveur FastAPI :**
     ```bash
     uvicorn main:app --reload
 
-4. **Accédez à la documentation Swagger de l’API :**
+5. **Accédez à la documentation Swagger de l’API :**
     ```bash
     http://localhost:8000/docs
 
@@ -22,7 +26,7 @@
 
 1. **Allez dans le dossier du frontend :**
     ```bash
-    cd frontend
+    cd frontend/spotilike
 
 2. **Installez les dépendances avec npm :**
     ```bash

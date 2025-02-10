@@ -16,7 +16,6 @@
     ```bash
     http://localhost:8000/docs
 
-
 ## Lancer ensuite un autre terminal powershell
 
 ## Launch frontend

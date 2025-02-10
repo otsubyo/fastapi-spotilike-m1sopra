@@ -92,7 +92,12 @@ export default {
 
 .artist-avatar {
   border-radius: 8px;
-  width: 100%;
+  width: 100%; /* Ajuste à la largeur du conteneur */
+  max-width: 250px; /* Taille maximale */
+  height: 250px; /* Fixe la hauteur pour uniformiser */
+  object-fit: cover; /* Assure que l’image remplit bien le cadre */
+  display: block;
+  margin: 0 auto; /* Centre l'image horizontalement */
 }
 
 .album-card, .track-card {
@@ -100,4 +105,68 @@ export default {
   border-radius: 8px;
   padding: 10px;
 }
+
+.artist-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Image de l'artiste */
+.artist-avatar {
+  border-radius: 8px;
+  width: 100%;
+  max-width: 250px;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Centrage des infos de l'artiste */
+.artist-info {
+  text-align: center;
+}
+
+/* Section albums et morceaux */
+.album-list,
+.track-list {
+  margin-top: 30px;
+}
+
+/* Cartes des albums et morceaux */
+.album-card,
+.track-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+}
+
+/* Image des albums */
+.album-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Organisation des morceaux */
+.track-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.track-card {
+  width: 300px;
+  padding: 10px;
+}
+
+/* Titres en blanc */
+.text-white {
+  color: white;
+}
+
 </style>

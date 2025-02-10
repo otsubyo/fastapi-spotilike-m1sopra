@@ -6,17 +6,21 @@
 
 2. **Allez dans le dossier du backend :**
     ```bash
-    cd backend/api
+    cd backend
 
 3. **Installez les dépendances Python :** 
     ```bash
     pip install -r requirements.txt
 
-4. **Lancez le serveur FastAPI :**
+4. **Allez dans le dossier de l'API :**
+    ```bash
+    cd api
+
+5. **Lancez le serveur FastAPI :**
     ```bash
     uvicorn main:app --reload
 
-5. **Accédez à la documentation Swagger de l’API :**
+6. **Accédez à la documentation Swagger de l’API :**
     ```bash
     http://localhost:8000/docs
 

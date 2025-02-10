@@ -25,13 +25,18 @@ app = FastAPI(
 )
 
 # --- Configuration CORS ---
+origins = [
+    "http://localhost:5173",  # 🔥 Frontend (Vue.js)
+    "http://127.0.0.1:5173",  # 🔥 Autre accès localhost
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Autorise toutes les origines (change pour + de sécurité)
+    allow_origins=origins,  # ✅ Autorise uniquement ces origines
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition"]  # Important pour les fichiers statiques
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # ✅ Méthodes HTTP autorisées
+    allow_headers=["*"],  # ✅ Autorise tous les headers
+    expose_headers=["*"],  # ✅ Important pour les fichiers statiques
 )
 
 # Définir le chemin du dossier des images
@@ -94,6 +99,63 @@ def add_song_to_album(id: int, track: model.Track, session: Session = Depends(da
         raise HTTPException(status_code=500, detail="An error occurred while adding the track")
     
     return new_track
+    
+@app.get("/api/albums/{id}/details")
+def get_album_details(id: int, session: Session = Depends(database.get_session)):
+    album = session.get(model.Album, id)
+    
+    if not album:
+        raise HTTPException(status_code=404, detail="Album not found")
+
+    # ✅ Récupérer l'artiste principal de l'album
+    artist = session.get(model.Artist, album.artist_id)
+
+    # ✅ Récupérer les genres associés aux morceaux de l'album (sans doublons)
+    genres = session.exec(
+        select(model.Genre.title)
+        .join(model.TrackGenre)
+        .join(model.Track)
+        .where(model.Track.album_id == id)
+    ).all()
+    
+    unique_genres = list(set(genres))  # ✅ Suppression des doublons
+
+    # ✅ Récupérer les morceaux de l'album avec les artistes en featuring
+    tracks = session.exec(
+        select(model.Track.track_id, model.Track.title, model.Track.duration)
+        .where(model.Track.album_id == id)
+    ).all()
+
+    # ✅ Associer chaque morceau à ses artistes
+    track_list = []
+    for track_id, title, duration in tracks:
+        artists = session.exec(
+            select(model.Artist.name, model.TrackArtist.role)
+            .join(model.TrackArtist)
+            .where(model.TrackArtist.track_id == track_id)
+        ).all()
+
+        primary_artist = [artist_name for artist_name, role in artists if role == 'Primary']
+        featuring_artists = [artist_name for artist_name, role in artists if role == 'Featuring']
+
+        track_list.append({
+            "track_id": track_id,
+            "title": title,
+            "duration": str(duration),
+            "primary_artist": primary_artist[0] if primary_artist else None,
+            "featuring": featuring_artists
+        })
+
+    return {
+        "album_id": album.album_id,
+        "title": album.title,
+        "cover": album.cover,
+        "release_date": album.release_date,
+        "artist": artist.name if artist else "Unknown",
+        "genres": unique_genres,  # ✅ Utilisation des genres uniques
+        "tracks": track_list
+    }
+
 
 @app.post("/api/albums/")
 def add_album(album: model.Album, session: Session = Depends(database.get_session), token: JWT_config.TokenData = Depends(JWT_config.verify_token)):
@@ -164,7 +226,7 @@ def get_artist(id: int, session: Session = Depends(database.get_session)):
 
     # ✅ Ici, on ne modifie PAS `artist.avatar`, car c'est déjà fait dans `get_artists()`
     return artist
-    
+
 @app.get("/api/artists/{id}/songs")
 def get_artist_songs(id: int, session: Session = Depends(database.get_session)):
     # Requête pour trouver les morceaux liés à cet artiste

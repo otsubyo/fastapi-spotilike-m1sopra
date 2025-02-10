@@ -23,6 +23,11 @@ export const getArtistAlbums = (artistId) => {
   return axios.get(`${API_URL}/artists/${artistId}/albums`);
 };
 
+
+export function getAlbumDetails(albumId) {
+  return axios.get(`${API_URL}/albums/${albumId}/details`);
+}
+
 // Récupérer un artiste par son ID
 export const getArtist = (id) => {
   return axios.get(`http://localhost:8000/api/artists/${id}`);

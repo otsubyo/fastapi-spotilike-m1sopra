@@ -10,23 +10,24 @@
       </v-col>
 
       <!-- Informations de l'album -->
-      <v-col cols="12" md="4" class="d-flex flex-column align-start">
+      <v-col cols="12" md="8" class="d-flex flex-column align-start">
         <h1 class="text-h4 font-weight-bold text-white">
           {{ album.title || "Titre non disponible" }}
         </h1>
-        <p class="text-white text-subtitle-1">
-          Date de sortie : {{ album.release_date || "Date non disponible" }}
-        </p>
+        <p class="text-white text-subtitle-1">Date de sortie : {{ album.release_date || "Date non disponible" }}</p>
+        <p class="text-white text-subtitle-1">Artiste : {{ album.artist || "Inconnu" }}</p>
+        <p class="text-white text-subtitle-1">Genre : {{ album.genres ? album.genres.join(", ") : "Aucun" }}</p>
 
         <h2 class="text-h5 mt-4 text-white">Morceaux :</h2>
 
-        <v-list v-if="tracks.length > 0" class="track-list">
-          <v-list-item v-for="track in tracks" :key="track.track_id">
+        <v-list v-if="album.tracks.length > 0" class="track-list">
+          <v-list-item v-for="track in album.tracks" :key="track.track_id">
             <v-list-item-title class="text-white">
               {{ track.title }}
             </v-list-item-title>
             <v-list-item-subtitle class="text-white">
               {{ formatDuration(track.duration) }}
+              <span v-if="track.featuring.length > 0"> (feat. {{ track.featuring.join(", ") }})</span>
             </v-list-item-subtitle>
           </v-list-item>
         </v-list>
@@ -40,39 +41,39 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getAlbum, getAlbumSongs } from '../api';
+import { getAlbumDetails } from '../api';
 
 export default {
   setup() {
-    const album = ref({}); // ✅ Initialisation correcte
-    const tracks = ref([]); // ✅ Initialisation avec un tableau vide
+    const album = ref({ tracks: [] });
     const route = useRoute();
 
     onMounted(async () => {
       const albumId = route.params.id;
 
       try {
-        // 🔍 Vérifier si l'API retourne bien un album
-        const albumRes = await getAlbum(albumId);
+        // 🔍 Récupérer les détails de l'album
+        const albumRes = await getAlbumDetails(albumId);
         album.value = albumRes.data || {};
-
-        // 🔍 Vérifier si l'API retourne bien des morceaux
-        const tracksRes = await getAlbumSongs(albumId);
-        tracks.value = tracksRes.data || [];
       } catch (error) {
         console.error("❌ Erreur lors du chargement des données :", error);
       }
     });
 
     const formatDuration = (duration) => {
-      if (!duration) return "Durée inconnue";
-      const minutes = Math.floor(duration / 60);
-      const seconds = duration % 60;
-      return `${minutes} min ${seconds.toString().padStart(2, "0")} sec`;
-    };
+      const [hours, minutes, seconds] = duration.split(":").map(Number);
 
-    return { album, tracks, formatDuration };
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds.toString().padStart(2, "0")}s`;
   }
+  return `${minutes} min ${seconds.toString().padStart(2, "0")} sec`;
+  };
+
+  return {
+    album,
+    formatDuration
+  };
+}
 };
 </script>
 

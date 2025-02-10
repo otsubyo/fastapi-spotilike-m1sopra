@@ -9,8 +9,9 @@
       </v-col>
 
       <v-col cols="12" md="8">
-        <h1 class="text-h4">{{ artist.name }}</h1>
-        <p class="text-body-1">{{ artist.biography }}</p>
+        <!-- ✅ Texte en blanc -->
+        <h1 class="text-h4 font-weight-bold text-white">{{ artist.name }}</h1>
+        <p class="text-body-1 text-white">{{ artist.biography }}</p>
       </v-col>
     </v-row>
 
@@ -23,9 +24,10 @@
         </v-card>
       </v-col>
     </v-row>
-    <p v-else class="text-body-2">Aucun morceau trouvé.</p>
+    <p v-else class="text-body-2 text-white">Aucun morceau trouvé.</p>
   </v-container>
 </template>
+
 
 <script>
 import { ref, onMounted } from "vue";

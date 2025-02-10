@@ -107,7 +107,7 @@ export default {
 }
 
 .artist-container {
-  padding: 20px;
+  padding: 100px;
   max-width: 1200px;
   margin: auto;
 }

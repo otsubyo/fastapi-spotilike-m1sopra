@@ -164,19 +164,39 @@ def get_artist(id: int, session: Session = Depends(database.get_session)):
 
     # ✅ Ici, on ne modifie PAS `artist.avatar`, car c'est déjà fait dans `get_artists()`
     return artist
-
-
+    
 @app.get("/api/artists/{id}/songs")
 def get_artist_songs(id: int, session: Session = Depends(database.get_session)):
     # Requête pour trouver les morceaux liés à cet artiste
     tracks = session.exec(
         select(model.Track).join(model.TrackArtist).where(model.TrackArtist.artist_id == id)
     ).all()
-    
+
     if not tracks:
         raise HTTPException(status_code=404, detail="No songs found for the given artist")
-    
+
+    # ✅ Convertit la durée en secondes avant de renvoyer les données
+    for track in tracks:
+        if isinstance(track.duration, time):  # Vérifie si c'est un format `hh:mm:ss`
+            track.duration = track.duration.hour * 3600 + track.duration.minute * 60 + track.duration.second
+        elif track.duration is None:
+            track.duration = 0  # Si la durée est NULL en base, on met 0
+
     return tracks
+
+ # ✅ Ajouter l'endpoint pour récupérer les albums d'un artiste
+@app.get("/api/artists/{id}/albums")
+def get_artist_albums(id: int, session: Session = Depends(database.get_session)):
+    artist = session.get(model.Artist, id)
+    if not artist:
+        raise HTTPException(status_code=404, detail="Artiste introuvable")
+
+    albums = session.exec(select(model.Album).where(model.Album.artist_id == id)).all()
+
+    if not albums:
+        return []
+
+    return albums   
 
 @app.put("/api/artists/{id}")
 def update_artist(id: int, artist_data: model.Artist, session: Session = Depends(database.get_session), token: JWT_config.TokenData = Depends(JWT_config.verify_token)):

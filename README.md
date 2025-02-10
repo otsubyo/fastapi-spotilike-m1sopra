@@ -6,7 +6,7 @@
 
 2. **Allez dans le dossier du backend :**
     ```bash
-    cd cd backend/api
+    cd backend/api
 
 3. **Installez les dépendances Python :** 
     ```bash

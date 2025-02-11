@@ -26,8 +26,10 @@ app = FastAPI(
 
 # --- Configuration CORS ---
 origins = [
-    "http://localhost:5173",  # 🔥 Frontend (Vue.js)
-    "http://127.0.0.1:5173",  # 🔥 Autre accès localhost
+    "http://localhost:5173",  # Frontend (Vue.js)
+    "http://127.0.0.1:5173",  # Autre accès localhost
+    "http://localhost:5174",  # PC Carl
+
 ]
 
 app.add_middleware(

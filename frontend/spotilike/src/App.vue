@@ -3,9 +3,10 @@
     <!-- Barre de navigation -->
     <v-app-bar app color="black">
       <v-container class="d-flex align-center">
-        <v-btn text to="/" class="text-white">Accueil</v-btn>
-        <v-btn text to="/albums" class="text-white">Liste des albums</v-btn>
-        <v-btn text to="/artists" class="text-white">Liste des artistes</v-btn>
+        <v-btn variant="text" to="/" class="text-white">Accueil</v-btn>
+        <v-btn variant="text" to="/albums" class="text-white">Liste des albums</v-btn>
+        <v-btn variant="text" to="/artists" class="text-white">Liste des artistes</v-btn>
+
 
         <!-- Espaceur pour pousser le logo à droite -->
         <v-spacer></v-spacer>

@@ -57,15 +57,15 @@ export default {
     onMounted(async () => {
       const artistId = route.params.id;
       try {
-        // ✅ Récupère les infos de l'artiste
+        // Récupère les infos de l'artiste
         const response = await getArtist(artistId);
         artist.value = response.data;
 
-        // ✅ Récupère les albums de l'artiste
+        // Récupère les albums de l'artiste
         const albumsResponse = await getArtistAlbums(artistId);
         albums.value = albumsResponse.data || [];
 
-        // ✅ Récupère les morceaux de l'artiste
+        // Récupère les morceaux de l'artiste
         const tracksResponse = await getArtistSongs(artistId);
         tracks.value = tracksResponse.data || [];
       } catch (error) {

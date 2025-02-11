@@ -33,16 +33,16 @@ export default {
       try {
         const response = await getArtists();
 
-        // ✅ EXTRACTION DU TABLEAU `data`
+        // EXTRACTION DU TABLEAU `data`
         if (response.data && Array.isArray(response.data)) {
           artists.value = response.data;
         } else {
           console.warn("L'API a retourné un format inattendu :", response);
-          artists.value = []; // ✅ Évite une erreur si la donnée est incorrecte
+          artists.value = []; // Évite une erreur si la donnée est incorrecte
         }
       } catch (error) {
         console.error("Erreur lors du chargement des artistes :", error);
-        artists.value = []; // ✅ Évite que Vue essaie de mapper sur `undefined`
+        artists.value = []; // Évite que Vue essaie de mapper sur `undefined`
       }
     });
 

@@ -32,11 +32,11 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # ✅ Autorise uniquement ces origines
+    allow_origins=origins,  # Autorise uniquement ces origines
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # ✅ Méthodes HTTP autorisées
-    allow_headers=["*"],  # ✅ Autorise tous les headers
-    expose_headers=["*"],  # ✅ Important pour les fichiers statiques
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Méthodes HTTP autorisées
+    allow_headers=["*"],  # Autorise tous les headers
+    expose_headers=["*"],  # Important pour les fichiers statiques
 )
 
 # Définir le chemin du dossier des images
@@ -69,7 +69,7 @@ def get_album_songs(id: int, session: Session = Depends(database.get_session)):
 
     songs = session.exec(select(model.Track).where(model.Track.album_id == id)).all()
 
-    # ✅ Convertit le temps (hh:mm:ss) en secondes (int)
+    # Convertit le temps (hh:mm:ss) en secondes (int)
     for song in songs:
         if isinstance(song.duration, time):
             song.duration = song.duration.hour * 3600 + song.duration.minute * 60 + song.duration.second
@@ -107,10 +107,10 @@ def get_album_details(id: int, session: Session = Depends(database.get_session))
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
 
-    # ✅ Récupérer l'artiste principal de l'album
+    # Récupérer l'artiste principal de l'album
     artist = session.get(model.Artist, album.artist_id)
 
-    # ✅ Récupérer les genres associés aux morceaux de l'album (sans doublons)
+    # Récupérer les genres associés aux morceaux de l'album (sans doublons)
     genres = session.exec(
         select(model.Genre.title)
         .join(model.TrackGenre)
@@ -118,15 +118,15 @@ def get_album_details(id: int, session: Session = Depends(database.get_session))
         .where(model.Track.album_id == id)
     ).all()
     
-    unique_genres = list(set(genres))  # ✅ Suppression des doublons
+    unique_genres = list(set(genres))  # Suppression des doublons
 
-    # ✅ Récupérer les morceaux de l'album avec les artistes en featuring
+    # Récupérer les morceaux de l'album avec les artistes en featuring
     tracks = session.exec(
         select(model.Track.track_id, model.Track.title, model.Track.duration)
         .where(model.Track.album_id == id)
     ).all()
 
-    # ✅ Associer chaque morceau à ses artistes
+    # Associer chaque morceau à ses artistes
     track_list = []
     for track_id, title, duration in tracks:
         artists = session.exec(
@@ -152,7 +152,7 @@ def get_album_details(id: int, session: Session = Depends(database.get_session))
         "cover": album.cover,
         "release_date": album.release_date,
         "artist": artist.name if artist else "Unknown",
-        "genres": unique_genres,  # ✅ Utilisation des genres uniques
+        "genres": unique_genres,  # Utilisation des genres uniques
         "tracks": track_list
     }
 
@@ -206,10 +206,10 @@ def get_artists(session: Session = Depends(database.get_session)):
     artists = session.exec(select(model.Artist)).all()
 
     if not artists:
-        return []  # ✅ Retourne un tableau vide si aucun artiste
+        return []  # Retourne un tableau vide si aucun artiste
 
     for artist in artists:
-        # ✅ Vérifie si le chemin est déjà correct pour éviter la duplication
+        # Vérifie si le chemin est déjà correct pour éviter la duplication
         if artist.avatar and not artist.avatar.startswith("/images/artists/"):
             artist.avatar = f"/images/artists/{artist.avatar}"
         elif not artist.avatar:
@@ -224,7 +224,7 @@ def get_artist(id: int, session: Session = Depends(database.get_session)):
     if not artist:
         raise HTTPException(status_code=404, detail="Artiste introuvable")
 
-    # ✅ Ici, on ne modifie PAS `artist.avatar`, car c'est déjà fait dans `get_artists()`
+    # Ici, on ne modifie PAS `artist.avatar`, car c'est déjà fait dans `get_artists()`
     return artist
 
 @app.get("/api/artists/{id}/songs")
@@ -237,7 +237,7 @@ def get_artist_songs(id: int, session: Session = Depends(database.get_session)):
     if not tracks:
         raise HTTPException(status_code=404, detail="No songs found for the given artist")
 
-    # ✅ Convertit la durée en secondes avant de renvoyer les données
+    # Convertit la durée en secondes avant de renvoyer les données
     for track in tracks:
         if isinstance(track.duration, time):  # Vérifie si c'est un format `hh:mm:ss`
             track.duration = track.duration.hour * 3600 + track.duration.minute * 60 + track.duration.second
@@ -246,7 +246,7 @@ def get_artist_songs(id: int, session: Session = Depends(database.get_session)):
 
     return tracks
 
- # ✅ Ajouter l'endpoint pour récupérer les albums d'un artiste
+ # Ajouter l'endpoint pour récupérer les albums d'un artiste
 @app.get("/api/artists/{id}/albums")
 def get_artist_albums(id: int, session: Session = Depends(database.get_session)):
     artist = session.get(model.Artist, id)

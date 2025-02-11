@@ -12,9 +12,9 @@
 
 <style scoped>
 .home-container {
-  min-height: 50vh;
+  min-height: 40vh;
   display: flex;
   justify-content: flex-start;
-  padding-top: 30vh;
+  padding-top: 20vh;
 }
 </style>

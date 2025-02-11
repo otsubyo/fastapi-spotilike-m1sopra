@@ -2,7 +2,7 @@
 INSERT INTO Artist (name, avatar, biography) VALUES
 ('Taylor Swift', '/images/artists/taylor.jpg', 'American singer-songwriter.'),
 ('Drake', '/images/artists/drake.jpg', 'Canadian rapper and singer.'),
-('Ed Sheeranuseruser_id', '/images/artists/ed.jpg', 'British singer and songwriter.'),
+('Ed Sheeran', '/images/artists/ed.jpg', 'British singer and songwriter.'),
 ('Billie Eilish', '/images/artists/billie.jpg', 'American singer known for her unique style.'),
 ('Adele', '/images/artists/adele.jpg', 'British singer and songwriter.'),
 ('Kanye West', '/images/artists/kanye.jpg', 'American rapper and producer.'),

@@ -50,7 +50,7 @@ if not os.path.exists(static_dir):
     raise RuntimeError(f"Le dossier 'public' n'existe pas : {static_dir}")
 
 # Monter le dossier pour servir les images sous "/images/"
-app.mount("/images", StaticFiles(directory=os.path.join(static_dir, "images")), name="images")
+# app.mount("/images", StaticFiles(directory=os.path.join(static_dir, "images")), name="images")
 
 # --- Endpoints Albums ---
 @app.get("/api/albums/")

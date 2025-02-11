@@ -1,10 +1,13 @@
 <template>
   <v-container>
     <h2 class="text-center text-white title-spacing">Liste des albums</h2>
+
     <v-row v-if="albums.length > 0">
       <v-col v-for="album in albums" :key="album.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="mx-auto" max-width="344">
-          <img :src="album.image" alt="Album cover" height="200px" style="width:100%; object-fit: cover;">
+          <!-- Chargement des images depuis le dossier public -->
+          <img :src="album.cover" alt="Album cover" height="200px" style="width:100%; object-fit: cover;">
+          
           <v-card-title>{{ album.title }}</v-card-title>
           <v-card-subtitle>{{ album.artist }}</v-card-subtitle>
           <v-card-actions>
@@ -13,6 +16,7 @@
         </v-card>
       </v-col>
     </v-row>
+
     <p v-else class="text-center text-white">Aucun album trouvé.</p>
   </v-container>
 </template>
@@ -24,16 +28,15 @@ import { getAlbums } from '@/api';
 export default {
   setup() {
     const albums = ref([]);
-    const baseURL = "http://localhost:8000"; // Base de l'API
-    const defaultImage = "/static/default.jpg"; // Image par défaut
+    const defaultImage = "/images/albums/default.jpg"; // Image par défaut dans /public/images/albums/
 
     onMounted(async () => {
       albums.value = await getAlbums();
 
-      // Assurer que chaque album a bien une image avec `/static/`
+      // Charger les images locales depuis /public/images/albums/
       albums.value = albums.value.map(album => ({
         ...album,
-        image: album.cover ? `${baseURL}${album.cover}` : `${baseURL}${defaultImage}`
+        image: album.cover ? `/images/albums/${album.cover}` : defaultImage
       }));
     });
 
@@ -43,11 +46,13 @@ export default {
 </script>
 
 <style scoped>
+/* Espacement sous le titre */
 .title-spacing {
-  margin-bottom: 100px; /* Ajoute un grand espace sous le titre */
+  margin-bottom: 100px;
 }
 
+/* Espace entre les cartes */
 .v-row {
-  row-gap: 30px; /* Espace entre les cartes */
+  row-gap: 30px;
 }
 </style>

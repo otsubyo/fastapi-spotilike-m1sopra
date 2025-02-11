@@ -5,7 +5,7 @@
       <v-col v-for="artist in artists" :key="artist.artist_id" cols="12" sm="6" md="4" lg="3">
         <v-card class="mx-auto" max-width="344">
           <!-- Image de l'artiste -->
-          <img :src="`http://localhost:8000${artist.avatar}`" alt="Artist Avatar" height="200px" style="width:100%; object-fit: cover;">
+          <img :src="`${artist.avatar}`" alt="Artist Avatar" height="200px" style="width:100%; object-fit: cover;">
           
           <v-card-title>{{ artist.name }}</v-card-title>
           <v-card-subtitle>{{ artist.biography }}</v-card-subtitle>

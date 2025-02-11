@@ -1,6 +1,9 @@
 <template>
   <v-container class="artist-container">
-    <v-btn color="primary" to="/artists" class="mb-3">⬅ Retour à la liste des artistes</v-btn>
+    <v-btn color="primary" to="/artists" class="mb-3">
+  <img src="/iconmonstr-arrow-left-alt-lined-240.png" alt="Retour" class="arrow-icon">
+  Retour à la liste des artistes
+  </v-btn>
 
     <v-row>
       <v-col cols="12" md="4">
@@ -167,6 +170,12 @@ export default {
 /* Titres en blanc */
 .text-white {
   color: white;
+}
+
+.arrow-icon {
+  width: 20px;  /* Ajuste la taille de la flèche */
+  height: 20px;
+  margin-right: 8px;  /* Espacement entre l'icône et le texte */
 }
 
 </style>

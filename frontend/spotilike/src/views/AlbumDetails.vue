@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    <v-btn color="primary" to="/albums" class="mb-4">⬅ Retour à la liste des albums</v-btn>
+    <v-btn color="primary" to="/albums" class="mb-4">
+  <img src="/iconmonstr-arrow-left-alt-lined-240.png" alt="Retour" class="arrow-icon">
+  Retour à la liste des albums
+    </v-btn>
+    
 
     <v-row>
       <!-- Image de l'album -->
@@ -123,5 +127,11 @@ export default {
 
 .track-item:last-child {
   border-bottom: none;
+}
+
+.arrow-icon {
+  width: 20px;  /* Taille contrôlée pour la flèche */
+  height: 20px;
+  margin-right: 8px;  /* Ajoute un espace entre l'icône et le texte */
 }
 </style>

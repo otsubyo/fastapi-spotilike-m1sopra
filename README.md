@@ -8,11 +8,29 @@
     ```bash
     cd backend
 
-3. **Installez les dépendances Python :** 
+3. **Créez un environnement virtuel Python et activez-le**
+   ```bash
+   python -m venv ./venv
+   ```
+   _bash :_
+   ```bash
+   source ./venv/bin/activate
+   ```
+   _powershell :_
+   ```bash
+   .\Scripts\Activate.ps1
+   ```
+   _cmd :_
+   ```bash
+   .\Script\activate.bat
+   ```
+   
+
+5. **Installez les dépendances Python :** 
     ```bash
     pip install -r requirements.txt
 
-4. **Allez dans le dossier de l'API :**
+6. **Allez dans le dossier de l'API :**
     ```bash
     cd api
 

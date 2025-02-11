@@ -29,7 +29,8 @@ origins = [
     "http://localhost:5173",  # Frontend (Vue.js)
     "http://127.0.0.1:5173",  # Autre accès localhost
     "http://localhost:5174",  # PC Carl
-
+    "http://192.168.1.25:5174", # serveur privé
+    "http://evvilly.ddns.net:5174", # serveur web
 ]
 
 app.add_middleware(

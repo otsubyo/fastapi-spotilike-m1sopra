@@ -1,3 +1,4 @@
+USE spotilikedb_carl_willy;
 -- Seed data for Artists
 INSERT INTO Artist (name, avatar, biography) VALUES
 ('Taylor Swift', '/images/artists/taylor.jpg', 'American singer-songwriter.'),
